@@ -17,7 +17,10 @@ paymentRouter.get("/config", async (req, res) => {
  * @returns client secret created by payment intent
  */
 paymentRouter.post("/intent", async (req, res) => {
+  console.log("[REQUEST]: ", req);
+
   let { amount } = req.body;
+  amount = (amount * 100).toFixed(0);
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -27,12 +30,12 @@ paymentRouter.post("/intent", async (req, res) => {
       automatic_payment_methods: { enabled: true },
     });
 
-    console.log(paymentIntent);
     res.status(201).json({
       message: "Payment intent created!",
       data: { clientSecret: paymentIntent.client_secret },
     });
   } catch (error) {
+    console.log("[ERROR]: ", error);
     res.status(400).json({
       message: "Payment Failed!",
       data: { error: error.message },
